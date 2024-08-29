@@ -1,0 +1,85 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+  <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+  <id>coco.cheese.ide</id>
+
+  <!-- Public plugin name should be written in Title Case.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+  <name>cheese-ide</name>
+
+  <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="3560000009@qq.com" url="https://cheese.worldcore.cn">cheese</vendor>
+
+  <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+       Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+  <description>cheese is an automation testing engine that can run automation scripts without root on Android 7.0 and above. Scripts are written in JavaScript, and plugins can be written to extend functionality.</description>
+
+  <!-- Product and plugin compatibility requirements.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+  <depends>com.intellij.modules.platform</depends>
+
+
+  <!-- Extension points defined by the plugin.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- 定义一个后启动活动，确保在 IntelliJ IDEA 启动后执行 -->
+    <postStartupActivity implementation="coco.cheese.ide.Application"/>
+    <!-- 定义一个通知组，设置显示类型为气泡通知，不默认记录日志 -->
+    <notificationGroup
+            displayType="BALLOON"
+            id="cheese_toast"
+            isLogByDefault="false"/>
+    <!-- 定义一个应用级服务 -->
+    <applicationService serviceImplementation="coco.cheese.ide.infrastructure.DataSetting"/>
+    <!-- 注册一个应用级配置面板，在“工具”菜单下显示，使用 SettingConfigVo 实现 -->
+    <applicationConfigurable parentId="tools" instance="coco.cheese.ide.domain.model.vo.SettingConfigVo" id="cheese.setting" displayName="Cheese设置"/>
+    <!-- 定义一个新的模块类型，标识符为 DEMO_MODULE_TYP -->
+    <moduleType
+            id="DEMO_MODULE_TYP"
+            implementationClass="coco.cheese.ide.factory.CModuleType"/>
+    <!-- 定义一个项目模板工厂 创建项目模板 -->
+    <directoryProjectGenerator implementation="coco.cheese.ide.factory.ProjectGenerator"/>
+    <projectTemplatesFactory implementation="coco.cheese.ide.factory.TemplateFactory"/>
+    <!-- 注册一个自定义执行器-->
+    <executor implementation="coco.cheese.ide.console.RunExecutor" id="RunExecutor"/>
+    <!-- 注册一个控制台过滤器提供者，优先级设置为最前 -->
+    <consoleFilterProvider implementation="cn.butterfly.sqllog.filter.MyBatisSQLFilter"
+                           order="first"/>
+<!--    &lt;!&ndash; 注册一个 JVM 异常过滤器优先级设置为最后 &ndash;&gt;-->
+<!--    <jvm.exceptionFilter implementation="cn.butterfly.sqllog.filter.ExceptionFilter"-->
+<!--                         order="last"/>-->
+    <!-- 注册一个文件图标提供者 -->
+    <fileIconProvider implementation="coco.cheese.ide.fileicon.TomlIcon"/>
+    <!-- 注册一个工具窗口，标识符为 Cheese-图色/节点工具，位置在右侧，图标为 AllIcons.Actions.GeneratedFolder -->
+    <toolWindow factoryClass="coco.cheese.ide.windows.toolwindow.TJ" id="Cheese-图色/节点工具" canCloseContents="false"
+                anchor="right" icon="AllIcons.Actions.GeneratedFolder"/>
+    <toolWindow factoryClass="coco.cheese.ide.windows.toolwindow.Ai" id="Cheese-Ai" canCloseContents="false"
+                anchor="right" icon="AllIcons.Actions.GeneratedFolder"/>
+
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="cheese.version.action" class="coco.cheese.ide.action.pm.VersionAction" text="Cheese IDE 版本号"
+            description="TestConfigAction">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt SEMICOLON"/>
+    </action>
+
+    <action id="cheese.test.action" class="coco.cheese.ide.action.pm.TestAction"
+            text="Cheese Test" description="Cheese 测试">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="cheese.console.action" class="coco.cheese.ide.action.pm.ConsoleViewAction"
+            text="Cheese控制台" description="打开Cheese控制台">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+
+    <group popup="true" class="coco.cheese.ide.action.epm.Cheese" id="coco.cheese.ide.action.epm.Cheese" text="Cheese" description="Quick search">
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+
+    </group>
+
+  </actions>
+</idea-plugin>
